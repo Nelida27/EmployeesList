@@ -7,6 +7,7 @@
         var empDeleted = $("#empDeleted");
 
     $(function () {
+      displayDeleted();
         var totalE = $("#totalE");
         var empList = $('#empList');
         $.ajax({
@@ -40,10 +41,11 @@
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
 
+            var hiddenRows = $("#empList p:hidden ").length;
             var filterRows = $("#empList p:visible ").length;
             var nrRow = "";
             if (value.length > 0) {
-                nrRow = "The number of filterd rows is: " + filterRows;
+                nrRow = "The number of filterd rows is: " + filterRows +"from "+ hiddenRows;
             }
             document.getElementById("emp_filter").innerHTML = nrRow;
         });
@@ -53,15 +55,32 @@
 
     });
 
+        var deletedEmployees=[];
+        var localData;
         function deleteEmployee(index) {
+
 
             dCount++;
             var employee = emp[index];
+            deletedEmployees.push(employee);
             var element = document.getElementById("employee-" + index);
+            localStorage.setItem('mysite1',JSON.stringify(deletedEmployees));
             element.remove();
             document.getElementById("deleteE").innerHTML = dCount;
             iDisplay = emp1 - dCount;
             document.getElementById("displayE").innerHTML = iDisplay;
-            empDeleted.append('<div class="row d-flexs justify-content-between  align-items-center rowStyle" id="employee-' + index + '" ><p data-toggle="tooltip"  data-placement="top"  title="age:' + employee.employee_age + "salary:" + employee.employee_salary + '" >'
-            + employee.employee_name + '</p><span class="fa fa-trash-o" ></span></div>');
+            empDeleted.empty();
+             displayDeleted();
+
+        }
+
+        function displayDeleted(){
+          localData = JSON.parse(localStorage.getItem('mysite1'));
+          deletedEmployees = localData;
+         for(var i=0;i<localData.length;i++){
+
+           empDeleted.append('<div class="row d-flexs justify-content-between  align-items-center rowStyle" ><p data-toggle="tooltip"  data-placement="top" >'
+          + localData[i].employee_name + '</p><span class="fa fa-trash-o" ></span></div>');
+
+         }
         }
